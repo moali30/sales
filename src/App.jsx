@@ -103,13 +103,13 @@ function App() {
 
         {/* Main Workspace */}
         <main className="flex-1 flex flex-col min-w-0 relative">
-          <header className="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-6 md:px-10 z-30 sticky top-0">
+          <header className="h-14 md:h-16 bg-white border-b border-slate-200 flex items-center justify-between px-4 md:px-10 z-30 sticky top-0">
             <div className="flex items-center gap-4">
               <div className="flex flex-col">
-                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Dataset</span>
+                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest hidden md:block">Dataset</span>
                 <div className="flex items-center gap-1">
                   <select 
-                    className="bg-transparent border-none p-0 text-sm font-bold text-slate-800 focus:ring-0 cursor-pointer appearance-none hover:text-primary transition-colors max-w-[160px] truncate"
+                    className="bg-transparent border-none p-0 text-sm md:text-base font-bold text-slate-800 focus:ring-0 cursor-pointer appearance-none hover:text-primary transition-colors max-w-[120px] md:max-w-[160px] truncate"
                     value={activeDatasetId || ''}
                     onChange={(e) => setActiveDatasetId(e.target.value)}
                     disabled={loading || activeDatasets.length === 0}
@@ -122,12 +122,12 @@ function App() {
                       ))
                     )}
                   </select>
-                  <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="text-slate-400 shrink-0"><path d="m6 9 6 6 6-6"/></svg>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="text-slate-400 shrink-0 mt-0.5"><path d="m6 9 6 6 6-6"/></svg>
                 </div>
               </div>
             </div>
             
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 md:gap-4">
               <ExcelUploader />
             </div>
           </header>

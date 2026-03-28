@@ -128,18 +128,18 @@ export default function ExcelUploader() {
        <button 
           onClick={downloadExcelTemplate}
           title="تحميل قالب الإكسيل"
-          className="flex items-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded text-sm font-medium transition-colors"
+          className="flex items-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 md:px-4 py-2 rounded text-sm font-medium transition-colors"
         >
           <Download size={16} />
-          قالب فارغ
+          <span className="hidden sm:inline">قالب فارغ</span>
         </button>
        <button 
           onClick={() => fileInputRef.current?.click()}
           disabled={isUploading}
-          className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded text-sm font-medium transition-colors disabled:opacity-50"
+          className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-3 md:px-4 py-2 rounded text-sm font-medium transition-colors disabled:opacity-50"
         >
           {isUploading ? <Loader2 size={16} className="animate-spin" /> : <Upload size={16} />}
-          {isUploading ? 'Uploading...' : 'Upload Excel'}
+          <span className="hidden sm:inline">{isUploading ? 'Uploading...' : 'Upload Excel'}</span>
         </button>
     </div>
   );

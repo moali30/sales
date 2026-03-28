@@ -112,103 +112,165 @@ export default function Datasets() {
             <p className="text-slate-400 text-xs mt-1">قم برفع ملف Excel من الشريط العلوي</p>
           </div>
         ) : (
-          <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
-            <table className="w-full text-left border-collapse">
-              <thead>
-                <tr className="bg-slate-50 border-b border-slate-100">
-                  <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">اسم الملف</th>
-                  <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] text-center hidden md:table-cell">تاريخ الرفع</th>
-                  <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] text-center">الحالة</th>
-                  <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] text-right">إجراءات</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100">
-                {datasets.map(dataset => (
-                  <tr key={dataset.id} className={`hover:bg-slate-50/50 transition-all group ${dataset.is_archived ? 'opacity-60' : ''}`}>
-                    <td className="px-6 py-4">
-                      {editingId === dataset.id ? (
-                        <div className="flex items-center gap-2">
-                          <input
-                            type="text"
-                            value={editName}
-                            onChange={(e) => setEditName(e.target.value)}
-                            className="px-3 py-1.5 text-sm font-semibold border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 bg-white"
-                            autoFocus
-                            onKeyDown={(e) => {
-                              if (e.key === 'Enter') handleEditSave(dataset.id);
-                              if (e.key === 'Escape') setEditingId(null);
-                            }}
-                          />
+            <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
+              {/* Desktop Table */}
+              <table className="w-full text-left border-collapse hidden md:table">
+                <thead>
+                  <tr className="bg-slate-50 border-b border-slate-100">
+                    <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">اسم الملف</th>
+                    <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] text-center hidden md:table-cell">تاريخ الرفع</th>
+                    <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] text-center">الحالة</th>
+                    <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] text-right">إجراءات</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100">
+                  {datasets.map(dataset => (
+                    <tr key={dataset.id} className={`hover:bg-slate-50/50 transition-all group ${dataset.is_archived ? 'opacity-60' : ''}`}>
+                      <td className="px-6 py-4">
+                        {editingId === dataset.id ? (
+                          <div className="flex items-center gap-2">
+                            <input
+                              type="text"
+                              value={editName}
+                              onChange={(e) => setEditName(e.target.value)}
+                              className="px-3 py-1.5 text-sm font-semibold border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 bg-white"
+                              autoFocus
+                              onKeyDown={(e) => {
+                                if (e.key === 'Enter') handleEditSave(dataset.id);
+                                if (e.key === 'Escape') setEditingId(null);
+                              }}
+                            />
+                            <button
+                              onClick={() => handleEditSave(dataset.id)}
+                              disabled={loading === dataset.id}
+                              className="p-1.5 bg-emerald-100 text-emerald-600 rounded-lg hover:bg-emerald-200 transition-colors"
+                            >
+                              <Check size={14} />
+                            </button>
+                            <button
+                              onClick={() => setEditingId(null)}
+                              disabled={loading === dataset.id}
+                              className="p-1.5 bg-slate-100 text-slate-600 rounded-lg hover:bg-slate-200 transition-colors"
+                            >
+                              <X size={14} />
+                            </button>
+                          </div>
+                        ) : (
+                          <p className="font-semibold text-slate-800 text-sm group-hover:text-primary transition-colors">{dataset.name}</p>
+                        )}
+                      </td>
+                      <td className="px-6 py-4 text-center hidden md:table-cell">
+                        <p className="text-xs text-slate-500 font-medium">
+                          {new Date(dataset.created_at).toLocaleDateString('ar-EG')}
+                        </p>
+                      </td>
+                      <td className="px-6 py-4 text-center">
+                        <span className={`inline-flex items-center px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border
+                          ${dataset.is_archived
+                            ? 'bg-amber-50 text-amber-600 border-amber-100'
+                            : 'bg-emerald-50 text-emerald-600 border-emerald-100'}`}>
+                          {dataset.is_archived ? 'مؤرشف' : 'نشط'}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="flex items-center justify-end gap-2">
                           <button
-                            onClick={() => handleEditSave(dataset.id)}
+                            onClick={() => {
+                              setEditingId(dataset.id);
+                              setEditName(dataset.name);
+                            }}
                             disabled={loading === dataset.id}
-                            className="p-1.5 bg-emerald-100 text-emerald-600 rounded-lg hover:bg-emerald-200 transition-colors"
+                            title="تعديل الاسم"
+                            className="p-2 rounded-xl hover:bg-blue-50 text-slate-400 hover:text-blue-600 transition-colors disabled:opacity-40"
                           >
-                            <Check size={14} />
+                            <Edit2 size={16} />
                           </button>
                           <button
-                            onClick={() => setEditingId(null)}
+                            onClick={() => handleArchive(dataset)}
                             disabled={loading === dataset.id}
-                            className="p-1.5 bg-slate-100 text-slate-600 rounded-lg hover:bg-slate-200 transition-colors"
+                            title={dataset.is_archived ? 'استعادة' : 'أرشفة'}
+                            className="p-2 rounded-xl hover:bg-amber-50 text-slate-400 hover:text-amber-600 transition-colors disabled:opacity-40"
                           >
-                            <X size={14} />
+                            {dataset.is_archived
+                              ? <ArchiveRestore size={16} />
+                              : <Archive size={16} />}
+                          </button>
+                          <button
+                            onClick={() => setConfirmDelete(dataset)}
+                            disabled={loading === dataset.id}
+                            title="حذف"
+                            className="p-2 rounded-xl hover:bg-rose-50 text-slate-400 hover:text-rose-600 transition-colors disabled:opacity-40"
+                          >
+                            <Trash2 size={16} />
                           </button>
                         </div>
-                      ) : (
-                        <p className="font-semibold text-slate-800 text-sm group-hover:text-primary transition-colors">{dataset.name}</p>
-                      )}
-                    </td>
-                    <td className="px-6 py-4 text-center hidden md:table-cell">
-                      <p className="text-xs text-slate-500 font-medium">
-                        {new Date(dataset.created_at).toLocaleDateString('ar-EG')}
-                      </p>
-                    </td>
-                    <td className="px-6 py-4 text-center">
-                      <span className={`inline-flex items-center px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border
-                        ${dataset.is_archived
-                          ? 'bg-amber-50 text-amber-600 border-amber-100'
-                          : 'bg-emerald-50 text-emerald-600 border-emerald-100'}`}>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+
+              {/* Mobile Cards */}
+              <div className="flex flex-col md:hidden divide-y divide-slate-100">
+                {datasets.map(dataset => (
+                  <div key={dataset.id} className={`p-4 hover:bg-slate-50 transition-all ${dataset.is_archived ? 'opacity-70' : ''}`}>
+                    <div className="flex items-start justify-between gap-3 mb-3">
+                      <div className="flex-1 min-w-0">
+                        {editingId === dataset.id ? (
+                          <div className="flex items-center gap-2 w-full">
+                            <input
+                              type="text"
+                              value={editName}
+                              onChange={(e) => setEditName(e.target.value)}
+                              className="flex-1 px-3 py-1.5 text-sm font-semibold border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 bg-white"
+                              autoFocus
+                              onKeyDown={(e) => {
+                                if (e.key === 'Enter') handleEditSave(dataset.id);
+                                if (e.key === 'Escape') setEditingId(null);
+                              }}
+                            />
+                            <button onClick={() => handleEditSave(dataset.id)} className="p-1.5 bg-emerald-100 text-emerald-600 rounded-lg"><Check size={14} /></button>
+                            <button onClick={() => setEditingId(null)} className="p-1.5 bg-slate-100 text-slate-600 rounded-lg"><X size={14} /></button>
+                          </div>
+                        ) : (
+                          <p className="font-semibold text-slate-800 text-sm truncate">{dataset.name}</p>
+                        )}
+                        <p className="text-xs text-slate-400 mt-1">{new Date(dataset.created_at).toLocaleDateString('ar-EG')}</p>
+                      </div>
+                      <span className={`shrink-0 inline-flex items-center px-2.5 py-1 rounded-md text-[9px] font-black uppercase tracking-widest border
+                        ${dataset.is_archived ? 'bg-amber-50 text-amber-600 border-amber-100' : 'bg-emerald-50 text-emerald-600 border-emerald-100'}`}>
                         {dataset.is_archived ? 'مؤرشف' : 'نشط'}
                       </span>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="flex items-center justify-end gap-2">
-                        <button
-                          onClick={() => {
-                            setEditingId(dataset.id);
-                            setEditName(dataset.name);
-                          }}
-                          disabled={loading === dataset.id}
-                          title="تعديل الاسم"
-                          className="p-2 rounded-xl hover:bg-blue-50 text-slate-400 hover:text-blue-600 transition-colors disabled:opacity-40"
-                        >
-                          <Edit2 size={16} />
-                        </button>
-                        <button
-                          onClick={() => handleArchive(dataset)}
-                          disabled={loading === dataset.id}
-                          title={dataset.is_archived ? 'استعادة' : 'أرشفة'}
-                          className="p-2 rounded-xl hover:bg-amber-50 text-slate-400 hover:text-amber-600 transition-colors disabled:opacity-40"
-                        >
-                          {dataset.is_archived
-                            ? <ArchiveRestore size={16} />
-                            : <Archive size={16} />}
-                        </button>
-                        <button
-                          onClick={() => setConfirmDelete(dataset)}
-                          disabled={loading === dataset.id}
-                          title="حذف"
-                          className="p-2 rounded-xl hover:bg-rose-50 text-slate-400 hover:text-rose-600 transition-colors disabled:opacity-40"
-                        >
-                          <Trash2 size={16} />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
+                    </div>
+
+                    <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-50">
+                      <button
+                        onClick={() => { setEditingId(dataset.id); setEditName(dataset.name); }}
+                        disabled={loading === dataset.id}
+                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-50 text-blue-600 text-xs font-bold transition-colors disabled:opacity-40"
+                      >
+                        <Edit2 size={12} /> <span className="hidden xs:inline">تعديل</span>
+                      </button>
+                      <button
+                        onClick={() => handleArchive(dataset)}
+                        disabled={loading === dataset.id}
+                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-100 text-slate-600 hover:bg-amber-50 hover:text-amber-600 text-xs font-bold transition-colors disabled:opacity-40"
+                      >
+                        {dataset.is_archived ? <ArchiveRestore size={12} /> : <Archive size={12} />}
+                        <span className="hidden xs:inline">{dataset.is_archived ? 'استعادة' : 'أرشفة'}</span>
+                      </button>
+                      <button
+                        onClick={() => setConfirmDelete(dataset)}
+                        disabled={loading === dataset.id}
+                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-rose-50 text-rose-600 text-xs font-bold transition-colors disabled:opacity-40"
+                      >
+                        <Trash2 size={12} /> <span className="hidden xs:inline">حذف</span>
+                      </button>
+                    </div>
+                  </div>
                 ))}
-              </tbody>
-            </table>
-          </div>
+              </div>
+            </div>
         )}
       </div>
     </>

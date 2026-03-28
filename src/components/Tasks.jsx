@@ -402,10 +402,11 @@ function TaskCard({ task, onMarkDone, onUndoDone, onSwap, onUpdateQty }) {
 
 // ─── Main Component ──────────────────────────────────────────────────────────
 const TABS = [
-  { id: 'today',  label: 'اليوم',       icon: Calendar },
-  { id: 'week',   label: 'هذا الأسبوع', icon: Calendar },
-  { id: 'month',  label: 'هذا الشهر',   icon: Calendar },
-  { id: 'custom', label: 'مخصص',        icon: CalendarRange },
+  { id: 'today',   label: 'اليوم',        icon: Calendar },
+  { id: 'overdue', label: 'متأخرة',       icon: AlertCircle },
+  { id: 'week',    label: 'هذا الأسبوع', icon: Calendar },
+  { id: 'month',   label: 'هذا الشهر',   icon: Calendar },
+  { id: 'custom',  label: 'مخصص',         icon: CalendarRange },
 ];
 
 export default function Tasks() {
@@ -525,6 +526,8 @@ export default function Tasks() {
     switch (activeTab) {
       case 'today':
         return tasks.filter(t => t.date === today);
+      case 'overdue':
+        return tasks.filter(t => t.date < today && t.status !== 'Done' && t.status !== 'Confirmed');
       case 'week':
         return tasks.filter(t => t.date >= weekRange.start && t.date <= weekRange.end);
       case 'month':
@@ -616,19 +619,30 @@ export default function Tasks() {
 
         {/* Time Tabs */}
         <div className="bg-white/50 p-2 rounded-2xl border border-slate-200 backdrop-blur-md mb-6 inline-flex overflow-x-auto max-w-full hide-scrollbar snap-x">
-          {TABS.map(tab => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`px-5 py-2.5 rounded-xl text-[13px] font-bold transition-all whitespace-nowrap flex items-center gap-2 snap-center
-                ${activeTab === tab.id
-                  ? 'bg-slate-900 text-white shadow-md'
-                  : 'bg-transparent text-slate-500 hover:text-slate-800 hover:bg-slate-100/50'}`}
-            >
-              <tab.icon size={14} className={activeTab === tab.id ? 'text-white/80' : 'text-slate-400'} />
-              {tab.label}
-            </button>
-          ))}
+          {TABS.map(tab => {
+            const isOverdueTab = tab.id === 'overdue';
+            const overdueCount = isOverdueTab ? tasks.filter(t => t.date < today && t.status !== 'Done' && t.status !== 'Confirmed').length : 0;
+            
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`px-5 py-2.5 rounded-xl text-[13px] font-bold transition-all whitespace-nowrap flex items-center gap-2 snap-center relative
+                  ${activeTab === tab.id
+                    ? 'bg-slate-900 text-white shadow-md'
+                    : 'bg-transparent text-slate-500 hover:text-slate-800 hover:bg-slate-100/50'}
+                  ${isOverdueTab && activeTab !== tab.id ? 'text-rose-600 hover:text-rose-700 hover:bg-rose-50' : ''}`}
+              >
+                <tab.icon size={14} className={`${activeTab === tab.id ? 'text-white/80' : isOverdueTab ? 'text-rose-500' : 'text-slate-400'}`} />
+                {tab.label}
+                {isOverdueTab && overdueCount > 0 && (
+                  <span className="bg-rose-500 text-white text-[10px] px-1.5 py-0.5 rounded-md ml-1 shadow-sm">
+                    {overdueCount}
+                  </span>
+                )}
+              </button>
+            );
+          })}
         </div>
 
         {/* Custom Range Pickers */}
