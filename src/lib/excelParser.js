@@ -117,11 +117,15 @@ export const parseExcelFile = (file) => {
           const d = dateKey ? row[dateKey] : row['التاريخ'];
           const dateStr = parseExcelDate(d);
 
+          // Detect template column flexibly
+          const templateKey = Object.keys(row).find(k => k && (k.trim() === 'النماذج' || k.trim() === 'النموذج' || k.trim() === 'نموذج'));
+          const templateName = templateKey ? String(row[templateKey]).trim() : '';
+
           return {
             date:              dateStr,
             invoice_number:    row['رقم الفاتورة'] || '',
             sequence_type:     row['نوع التسلسل'] || '',
-            template_name:     row['النماذج'] || '',
+            template_name:     templateName,
             product_name:      typeof row['الصنف'] === 'string' ? row['الصنف'].trim() : String(row['الصنف']),
             quantity_required: parseInt(row['الكمية'], 10) || 0,
             notes:             row['ملاحظات']   || '',
