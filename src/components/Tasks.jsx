@@ -309,6 +309,16 @@ function TaskCard({ task, onMarkDone, onUndoDone, onSwap, onUpdateQty }) {
                 {task.sequence_type}
               </span>
             )}
+            {task.template_name && task.template_name === '1' && (
+              <span className="text-[10px] font-black text-blue-600 uppercase tracking-widest bg-blue-50 px-2.5 py-1 rounded-lg border border-blue-100 flex items-center gap-1">
+                <ShoppingBag size={10} /> نموذج
+              </span>
+            )}
+            {task.template_name && task.template_name !== '1' && (
+              <span className="text-[10px] font-black text-blue-600 uppercase tracking-widest bg-blue-50 px-2.5 py-1 rounded-lg border border-blue-100 flex items-center gap-1">
+                <ShoppingBag size={10} /> النماذج: {task.template_name}
+              </span>
+            )}
             {task.invoice_number && (
               <span className="text-[10px] font-black text-emerald-600 uppercase tracking-widest bg-emerald-50 px-2.5 py-1 rounded-lg border border-emerald-100">
                 #{task.invoice_number}
