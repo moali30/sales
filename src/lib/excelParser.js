@@ -141,3 +141,26 @@ export const parseExcelFile = (file) => {
     reader.readAsArrayBuffer(file);
   });
 };
+
+/**
+ * Generates and downloads a blank Excel template for the user to fill out.
+ */
+export const downloadExcelTemplate = () => {
+  const wb = XLSX.utils.book_new();
+
+  // 1. Summary Sheet Template
+  const summaryData = [
+    { 'الكود': '', 'الصنف': '', 'الكمية المباعة': 0, 'المخزون المتبقي': 0, 'الحالة': 'متوفر' }
+  ];
+  const summaryWS = XLSX.utils.json_to_sheet(summaryData);
+  XLSX.utils.book_append_sheet(wb, summaryWS, SUMMARY_SHEET);
+
+  // 2. Invoices Sheet Template
+  const invoicesData = [
+    { 'التاريخ': '2024-01-01', 'رقم الفاتورة': '', 'نوع التسلسل': '', 'الصنف': '', 'الكمية': 0, 'ملاحظات': '' }
+  ];
+  const invoicesWS = XLSX.utils.json_to_sheet(invoicesData);
+  XLSX.utils.book_append_sheet(wb, invoicesWS, INVOICES_SHEET);
+
+  XLSX.writeFile(wb, 'Sales_Tracker_Template.xlsx');
+};

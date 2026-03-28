@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react';
-import { Upload, Loader2 } from 'lucide-react';
+import { Upload, Loader2, Download } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { parseExcelFile } from '../lib/excelParser';
+import { parseExcelFile, downloadExcelTemplate } from '../lib/excelParser';
 import { supabase } from '../lib/supabase';
 import { useAppContext } from '../context/AppContext';
 
@@ -125,6 +125,14 @@ export default function ExcelUploader() {
           ref={fileInputRef} 
           onChange={handleFileChange}
        />
+       <button 
+          onClick={downloadExcelTemplate}
+          title="تحميل قالب الإكسيل"
+          className="flex items-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded text-sm font-medium transition-colors"
+        >
+          <Download size={16} />
+          قالب فارغ
+        </button>
        <button 
           onClick={() => fileInputRef.current?.click()}
           disabled={isUploading}

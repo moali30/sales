@@ -3,7 +3,7 @@ import { useAppContext } from '../context/AppContext';
 import { supabase } from '../lib/supabase';
 import {
   Check, AlertCircle, Calendar, ChevronRight, ShoppingBag,
-  ArrowLeftRight, X, Search, CalendarRange, Plus, Minus
+  ArrowLeftRight, X, Search, CalendarRange, Plus, Minus, RotateCcw
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
@@ -282,7 +282,8 @@ function SwapModal({ task, products, onClose, onSwapped }) {
 }
 
 // ─── Task Card ───────────────────────────────────────────────────────────────
-function TaskCard({ task, onMarkDone, onSwap, onUpdateQty }) {
+function TaskCard({ task, onMarkDone, onUndoDone, onSwap, onUpdateQty }) {
+  const isDone = task.status === 'Done' || task.status === 'Confirmed';
   const isLow = (task.products?.inventory_count ?? 0) <= 0;
   const isInsufficient = (task.products?.inventory_count ?? 0) < task.quantity_required;
   const [editingQty, setEditingQty] = useState(false);
@@ -298,7 +299,8 @@ function TaskCard({ task, onMarkDone, onSwap, onUpdateQty }) {
   };
 
   return (
-    <div className="bg-white border border-slate-200/60 rounded-2xl p-5 shadow-sm hover:shadow-md transition-all duration-300 group">
+    <div className={`bg-white border rounded-2xl p-5 shadow-sm hover:shadow-md transition-all duration-300 group
+      ${isDone ? 'border-emerald-200 bg-emerald-50/20 opacity-80' : 'border-slate-200/60'}`}>
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-2 flex-wrap">
@@ -321,7 +323,10 @@ function TaskCard({ task, onMarkDone, onSwap, onUpdateQty }) {
           {task.products?.code && (
             <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{task.products.code}</p>
           )}
-          <h3 className="text-lg font-bold text-slate-900 group-hover:text-primary transition-colors truncate">{task.products?.name}</h3>
+          <h3 className={`text-lg font-bold truncate transition-colors flex items-center gap-2 ${isDone ? 'text-emerald-700 line-through decoration-emerald-300' : 'text-slate-900 group-hover:text-primary'}`}>
+            {task.products?.name}
+            {isDone && <Check size={16} className="text-emerald-500 shrink-0" />}
+          </h3>
           {task.notes && (
             <p className="text-xs text-slate-500 mt-2 font-medium bg-slate-50 p-2 rounded-lg inline-block border border-slate-100">
               {task.notes}
@@ -331,7 +336,7 @@ function TaskCard({ task, onMarkDone, onSwap, onUpdateQty }) {
 
         <div className="flex flex-col sm:flex-row sm:items-center justify-between md:justify-end gap-5 md:gap-8 bg-slate-50/50 md:bg-transparent p-4 md:p-0 rounded-xl md:rounded-none">
           <div className="flex items-center gap-8 md:px-6 md:border-x border-slate-100 h-full">
-            <div className="text-center group/edit">
+            <div className={`text-center group/edit ${isDone ? 'opacity-50 pointer-events-none' : ''}`}>
               <p className="text-[9px] text-slate-400 uppercase font-black tracking-widest mb-1">الكمية المطلوبة</p>
               {editingQty ? (
                 <div className="flex items-center bg-white border border-primary text-primary rounded-lg shadow-inner mt-1">
@@ -347,7 +352,7 @@ function TaskCard({ task, onMarkDone, onSwap, onUpdateQty }) {
                   title="تعديل الكمية"
                 >
                   <span className="font-bold text-2xl text-slate-800 tracking-tight leading-none">{task.quantity_required}</span>
-                  <span className="opacity-0 group-hover/edit:opacity-100 text-primary transition-opacity"><Plus size={12} strokeWidth={3} className="-mb-2 -ml-1 text-slate-300"/></span>
+                  {!isDone && <span className="opacity-0 group-hover/edit:opacity-100 text-primary transition-opacity"><Plus size={12} strokeWidth={3} className="-mb-2 -ml-1 text-slate-300"/></span>}
                 </div>
               )}
             </div>
@@ -360,22 +365,34 @@ function TaskCard({ task, onMarkDone, onSwap, onUpdateQty }) {
           </div>
 
           <div className="flex flex-row md:flex-col gap-2 w-full sm:w-auto mt-2 sm:mt-0">
-            <button
-              onClick={() => onSwap(task)}
-              className="flex-1 sm:flex-none glass-button bg-white border border-slate-200 hover:bg-slate-50 hover:border-slate-300 text-slate-700 px-4 py-2.5 rounded-xl font-bold text-xs uppercase tracking-widest flex items-center justify-center gap-2 transition-all shadow-sm"
-              title="استبدال المنتج"
-            >
-              <ArrowLeftRight size={14} />
-              استبدال
-            </button>
-            <button
-              onClick={() => onMarkDone(task)}
-              disabled={isInsufficient}
-              className="flex-1 sm:flex-none glass-button bg-primary hover:bg-primary-hover disabled:opacity-50 disabled:grayscale text-white px-4 py-2.5 rounded-xl font-bold text-xs uppercase tracking-widest flex items-center justify-center gap-2 shadow-lg shadow-primary/20 transition-all group/btn relative"
-            >
-              تأكيد
-              <ChevronRight size={14} className="group-hover/btn:translate-x-1 transition-transform" />
-            </button>
+            {!isDone && (
+              <button
+                onClick={() => onSwap(task)}
+                className="flex-1 sm:flex-none glass-button bg-white border border-slate-200 hover:bg-slate-50 hover:border-slate-300 text-slate-700 px-4 py-2.5 rounded-xl font-bold text-xs uppercase tracking-widest flex items-center justify-center gap-2 transition-all shadow-sm"
+                title="استبدال المنتج"
+              >
+                <ArrowLeftRight size={14} />
+                استبدال
+              </button>
+            )}
+            {isDone ? (
+              <button
+                onClick={() => onUndoDone(task)}
+                className="flex-1 sm:flex-none bg-white border border-slate-300 text-slate-600 hover:bg-slate-50 px-4 py-2.5 rounded-xl font-bold text-xs uppercase tracking-widest flex items-center justify-center gap-2 transition-all shadow-sm"
+              >
+                تراجع
+                <RotateCcw size={14} />
+              </button>
+            ) : (
+              <button
+                onClick={() => onMarkDone(task)}
+                disabled={isInsufficient}
+                className="flex-1 sm:flex-none glass-button bg-primary hover:bg-primary-hover disabled:opacity-50 disabled:grayscale text-white px-4 py-2.5 rounded-xl font-bold text-xs uppercase tracking-widest flex items-center justify-center gap-2 shadow-lg shadow-primary/20 transition-all group/btn relative"
+              >
+                تأكيد
+                <ChevronRight size={14} className="group-hover/btn:translate-x-1 transition-transform" />
+              </button>
+            )}
           </div>
         </div>
       </div>
@@ -415,7 +432,6 @@ export default function Tasks() {
           .from('sales_transactions')
           .select(`*, products(id, code, name, inventory_count)`)
           .eq('dataset_id', activeDatasetId)
-          .eq('status', 'Pending')
           .order('date', { ascending: true }),
         supabase
           .from('products')
@@ -443,7 +459,7 @@ export default function Tasks() {
 
   const handleMarkDone = async (task) => {
     try {
-      setTasks(prev => prev.filter(t => t.id !== task.id));
+      setTasks(prev => prev.map(t => t.id === task.id ? { ...t, status: 'Done' } : t));
       const { error } = await supabase.rpc('mark_sale_done', {
         sale_id: task.id,
         prod_id: task.product_id,
@@ -457,6 +473,29 @@ export default function Tasks() {
       }
     } catch (err) {
       toast.error('خطأ غير متوقع.');
+      fetchTasks();
+    }
+  };
+
+  const handleUndoDone = async (task) => {
+    try {
+      setTasks(prev => prev.map(t => t.id === task.id ? { ...t, status: 'Pending' } : t));
+      
+      const { data: currentProduct, error: prodErr } = await supabase.from('products').select('inventory_count, total_sold').eq('id', task.product_id).single();
+      if(prodErr) throw prodErr;
+
+      await Promise.all([
+        supabase.from('sales_transactions').update({ status: 'Pending' }).eq('id', task.id),
+        supabase.from('products').update({ 
+          inventory_count: currentProduct.inventory_count + task.quantity_required,
+          total_sold: Math.max(0, currentProduct.total_sold - task.quantity_required)
+        }).eq('id', task.product_id)
+      ]);
+
+      toast.success('تم التراجع وإعادة الكمية للمخزون');
+      fetchTasks();
+    } catch(err) {
+      toast.error('حدث خطأ أثناء التراجع');
       fetchTasks();
     }
   };
@@ -669,6 +708,7 @@ export default function Tasks() {
                       key={task.id}
                       task={task}
                       onMarkDone={handleMarkDone}
+                      onUndoDone={handleUndoDone}
                       onSwap={setSwapTask}
                       onUpdateQty={handleUpdateQty}
                     />
