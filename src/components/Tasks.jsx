@@ -369,66 +369,66 @@ function PostponeModal({ invoiceGroup, allTasks, onClose, onPostponed }) {
   };
 
   return (
-    <div className="fixed inset-0 z-[60] flex items-end md:items-center justify-center p-4 bg-black/40 backdrop-blur-sm fade-in" onClick={onClose}>
-      <div className="bg-white rounded-3xl shadow-2xl w-full max-w-md flex flex-col" onClick={e => e.stopPropagation()}>
-        <div className="p-6 border-b border-slate-100 flex items-center justify-between bg-gradient-to-l from-amber-50/50 to-white rounded-t-3xl">
+    <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm fade-in" onClick={onClose}>
+      <div className="bg-white rounded-3xl shadow-2xl w-full max-w-[320px] md:max-w-sm flex flex-col" onClick={e => e.stopPropagation()}>
+        <div className="p-4 md:p-5 flex items-center justify-between bg-gradient-to-l from-amber-50/50 to-white rounded-t-3xl border-b border-slate-100">
           <div className="flex items-center gap-3">
-            <div className="w-11 h-11 bg-amber-100 rounded-2xl flex items-center justify-center text-amber-600">
-              <CalendarClock size={20} />
+            <div className="w-10 h-10 bg-amber-100 rounded-2xl flex items-center justify-center text-amber-600 shrink-0">
+              <CalendarClock size={18} />
             </div>
             <div>
-              <h3 className="text-lg font-bold text-slate-900 tracking-tight">تأجيل الفاتورة</h3>
-              <p className="text-xs text-slate-500 mt-0.5 font-medium">
+              <h3 className="text-base font-bold text-slate-900 tracking-tight">تأجيل الفاتورة</h3>
+              <p className="text-[10px] text-slate-500 mt-0.5 font-medium">
                 <span className="font-black text-amber-600">#{invoiceGroup.invoice_number}</span> — {formatFullDate(currentDate)}
               </p>
             </div>
           </div>
-          <button onClick={onClose} className="w-8 h-8 rounded-full bg-white border border-slate-200 shadow-sm flex items-center justify-center hover:bg-slate-50 transition-colors">
+          <button onClick={onClose} className="w-7 h-7 rounded-full bg-white border border-slate-200 shadow-sm flex items-center justify-center hover:bg-slate-50 transition-colors shrink-0">
             <X size={14} className="text-slate-500" />
           </button>
         </div>
 
-        <div className="p-6 space-y-5">
+        <div className="p-4 md:p-5 space-y-4">
           <div>
-            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 block">التاريخ الجديد</label>
+            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 block">التاريخ الجديد</label>
             <input
               type="date"
               value={newDate}
               onChange={e => setNewDate(e.target.value)}
-              className="w-full px-4 py-3.5 bg-white border border-slate-200 shadow-sm rounded-xl text-sm font-bold focus:outline-none focus:ring-2 focus:ring-amber-200 transition-all"
+              className="w-full px-3 py-2.5 bg-white border border-slate-200 shadow-sm rounded-xl text-sm font-bold focus:outline-none focus:ring-2 focus:ring-amber-200 transition-all"
             />
             {newDate !== currentDate && (
-              <p className="text-xs font-bold mt-2 text-amber-600 bg-amber-50 px-3 py-2 rounded-lg border border-amber-100 fade-in">
+              <p className="text-[10px] font-bold mt-2 text-amber-600 bg-amber-50 px-2 py-1.5 rounded-lg border border-amber-100 fade-in text-center">
                 فرق {Math.abs(daysDiff(currentDate, newDate))} يوم {daysDiff(currentDate, newDate) > 0 ? '(تأجيل)' : '(تقديم)'}
               </p>
             )}
           </div>
 
-          <div className="bg-slate-50 rounded-xl p-4 border border-slate-100">
-            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">الفواتير المتأثرة</p>
-            <div className="flex items-baseline gap-2">
-              <span className="text-3xl font-black text-slate-800">{affectedCount + invoiceGroup.items.length}</span>
-              <span className="text-sm font-bold text-slate-500">فاتورة / صنف ستتأجل</span>
+          <div className="bg-slate-50 rounded-xl p-3 border border-slate-100 text-center">
+            <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-2">الفواتير المتأثرة</p>
+            <div className="flex items-baseline justify-center gap-1.5">
+              <span className="text-2xl font-black text-slate-800">{affectedCount + invoiceGroup.items.length}</span>
+              <span className="text-xs font-bold text-slate-500">فاتورة / صنف ستتأجل</span>
             </div>
-            <p className="text-[11px] text-slate-400 mt-2 font-medium leading-relaxed">
-              هذه الفاتورة + كل الفواتير بعدها (غير المؤكدة) ستتأجل بنفس الفرق الزمني
+            <p className="text-[9px] text-slate-400 mt-1.5 font-medium leading-relaxed max-w-[200px] mx-auto">
+              هذه الفاتورة + كل الفواتير بعدها (غير المؤكدة) ستتأجل بنفس الفرق
             </p>
           </div>
         </div>
 
-        <div className="p-6 border-t border-slate-100 bg-slate-50/50 rounded-b-3xl flex gap-3">
+        <div className="p-4 md:p-5 border-t border-slate-100 bg-slate-50/50 rounded-b-3xl flex gap-2">
           <button
             onClick={onClose}
-            className="flex-1 py-3 rounded-xl bg-white border border-slate-200 text-slate-700 font-bold text-sm hover:bg-slate-50 transition-all"
+            className="flex-1 py-2.5 rounded-xl bg-white border border-slate-200 text-slate-700 font-bold text-xs hover:bg-slate-50 transition-all"
           >
             إلغاء
           </button>
           <button
             onClick={handlePostpone}
             disabled={loading || newDate === currentDate}
-            className="flex-1 py-3 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-bold text-sm shadow-lg shadow-amber-500/20 transition-all disabled:opacity-50 disabled:grayscale flex items-center justify-center gap-2"
+            className="flex-1 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs shadow-lg shadow-amber-500/20 transition-all disabled:opacity-50 disabled:grayscale flex items-center justify-center gap-1.5"
           >
-            {loading ? <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <><CalendarClock size={16} /> تأجيل</>}
+            {loading ? <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <><CalendarClock size={14} /> تأكيد</>}
           </button>
         </div>
       </div>
