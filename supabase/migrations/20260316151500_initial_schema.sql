@@ -27,6 +27,8 @@ CREATE TABLE sales_transactions (
   invoice_number TEXT,
   sequence_type TEXT,
   quantity_required INTEGER DEFAULT 0,
+  unit_price INTEGER DEFAULT 0,
+  template_name TEXT,
   notes TEXT,
   status TEXT DEFAULT 'Pending'
 );

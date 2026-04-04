@@ -128,6 +128,7 @@ export const parseExcelFile = (file) => {
             template_name:     templateName,
             product_name:      typeof row['الصنف'] === 'string' ? row['الصنف'].trim() : String(row['الصنف']),
             quantity_required: parseInt(row['الكمية'], 10) || 0,
+            unit_price:        parseInt(row['سعر الوحدة'], 10) || 0,
             notes:             row['ملاحظات']   || '',
             status:            'Pending',
           };
@@ -162,7 +163,7 @@ export const downloadExcelTemplate = () => {
 
   // 2. Invoices Sheet Template
   const invoicesData = [
-    { 'التاريخ': '2024-01-01', 'رقم الفاتورة': '', 'نوع التسلسل': '', 'النماذج': '', 'الصنف': '', 'الكمية': 0, 'ملاحظات': '' }
+    { 'التاريخ': '2024-01-01', 'رقم الفاتورة': '', 'نوع التسلسل': '', 'النموذج': '', 'الصنف': '', 'الكمية': 0, 'سعر الوحدة': 0, 'الإجمالي': 0, 'ملاحظات': '' }
   ];
   const invoicesWS = XLSX.utils.json_to_sheet(invoicesData);
   XLSX.utils.book_append_sheet(wb, invoicesWS, INVOICES_SHEET);
